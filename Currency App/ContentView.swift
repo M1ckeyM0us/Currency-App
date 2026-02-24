@@ -4,21 +4,24 @@
 //
 //  Created by MYKHAILO NAUMOV on 2/18/26.
 //
+
 import SwiftUI
 
 struct ContentView: View {
     
+    @State var selectedCountryCode = "US"
+    
     var body: some View {
         TabView {
             
-            BrowseView()
-                .tabItem {
-                    Label("Browse", systemImage: "globe")
-                }
-            
-            SearchView()
+            SearchView(selectedCountryCode: $selectedCountryCode)
                 .tabItem {
                     Label("Search", systemImage: "magnifyingglass")
+                }
+            
+            CountryDetailView(countryCode: selectedCountryCode)
+                .tabItem {
+                    Label("Details", systemImage: "doc.text")
                 }
         }
     }

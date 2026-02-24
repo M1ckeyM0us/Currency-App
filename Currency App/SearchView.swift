@@ -9,67 +9,42 @@ import SwiftUI
 
 struct SearchView: View {
     
-    @State var searchText = ""
+    @State var countryName = ""
+    @Binding var selectedCountryCode: String
+    @State var message = ""
     
     var body: some View {
-        
         NavigationView {
-            VStack {
+            VStack(spacing: 20) {
                 
-                TextField("Search country...", text: $searchText)
+                TextField("Enter country name", text: $countryName)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
                 
-                ScrollView {
-                    
-                    VStack(alignment: .leading, spacing: 15) {
-                        
-                        ForEach(getFilteredCountries(), id: \.key) { country in
-                            
-                            NavigationLink {
-                                
-                                CountryDetailView(countryCode: country.key)
-                                
-                            }
-                            
-                            label: {
-                                
-                                Text(country.value)
-                                    .padding(.horizontal)
-                                
-                            }
-                        }
-                    }
+                Button("Submit") {
+                    findCountry()
                 }
+                
+                Text(message)
+                    .foregroundColor(.red)
                 
                 Spacer()
             }
-            .navigationTitle("Search Countries")
+            .navigationTitle("Search Country")
         }
     }
     
-    
-    func getFilteredCountries() -> [(key: String, value: String)] {
+    func findCountry() {
+        let input = countryName.trimmingCharacters(in: .whitespacesAndNewlines)
         
-        var results: [(key: String, value: String)] = []
-        
-        for country in countriesDict {
-            
-            if searchText.isEmpty {
-                
-                results.append(country)
-                
-            }
-            else if country.value.lowercased().contains(searchText.lowercased()) {
-                
-                results.append(country)
-                
+        for (code, name) in countriesDict {
+            if name.lowercased() == input.lowercased() {
+                selectedCountryCode = code
+                message = "Country selected"
+                return
             }
         }
         
-        return results
-        
+        message = "Country not found"
     }
-    
 }
-
