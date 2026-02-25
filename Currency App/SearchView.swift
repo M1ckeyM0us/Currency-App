@@ -11,40 +11,37 @@ struct SearchView: View {
     
     @State var countryName = ""
     @Binding var selectedCountryCode: String
-    @State var message = ""
+    
+    // Filters the country
+    // for exmaple if you will write uni it will give options like Unites States or United Kingdom
+    var filteredCountries: [(key: String, value: String)] {
+        if countryName.isEmpty {
+            return countriesDict.sorted { $0.value < $1.value }
+        }
+        else {
+            return countriesDict
+                .filter { $0.value.lowercased().contains(countryName.lowercased()) }
+                .sorted { $0.value < $1.value }
+        }
+    }
     
     var body: some View {
         NavigationView {
-            VStack(spacing: 20) {
+            VStack {
                 
                 TextField("Enter country name", text: $countryName)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
                 
-                Button("Submit") {
-                    findCountry()
+                List(filteredCountries, id: \.key) { country in
+                    Button(country.value) {
+                        selectedCountryCode = country.key
+                        countryName = country.value
+                    }
                 }
                 
-                Text(message)
-                    .foregroundColor(.red)
-                
-                Spacer()
             }
             .navigationTitle("Search Country")
         }
-    }
-    
-    func findCountry() {
-        let input = countryName.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        for (code, name) in countriesDict {
-            if name.lowercased() == input.lowercased() {
-                selectedCountryCode = code
-                message = "Country selected"
-                return
-            }
-        }
-        
-        message = "Country not found"
     }
 }

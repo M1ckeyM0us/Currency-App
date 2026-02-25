@@ -13,29 +13,44 @@ struct CountryDetailView: View {
     @State var countryData: NSDictionary? = nil
     
     var body: some View {
-        VStack(spacing: 20) {
-            
-            Text("Country Information")
-                .font(.title)
-            
-            Button("Load Country Info") {
-                loadCountry()
+        
+        ScrollView {
+            VStack(spacing: 20) {
+                
+                Text("Country Information")
+                    .font(.largeTitle)
+                    .bold()
+                
+                Button("Load Country Info") {
+                    loadCountry()
+                }
+                
+                if let data = countryData {
+                    
+                    Text(getFlag(data))
+                        .font(.system(size: 80))
+                    
+                    infoBox(title: "Official Name", value: getOfficialName(data))
+                    infoBox(title: "Capital", value: getCapital(data))
+                    infoBox(title: "Region", value: getRegion(data))
+                    infoBox(title: "Subregion", value: getSubregion(data))
+                    infoBox(title: "Population", value: getPopulation(data))
+                    infoBox(title: "Area (km²)", value: getArea(data))
+                    infoBox(title: "Currency", value: getCurrency(data))
+                    infoBox(title: "Timezones", value: getTimezones(data))
+                    
+                } else {
+                    Text("No data loaded")
+                }
+                
+                Spacer()
             }
-            
-            if let data = countryData {
-                Text("Name: \(getName(data))")
-                Text("Capital: \(getCapital(data))")
-                Text("Region: \(getRegion(data))")
-                Text("Population: \(getPopulation(data))")
-                Text("Currency: \(getCurrency(data))")
-            } else {
-                Text("No data loaded")
-            }
-            
-            Spacer()
+            .padding()
         }
-        .padding()
     }
+    
+    // its really neccessary
+    // all of those functions are being used for displaying information
     
     func loadCountry() {
         CountryService().loadCountry(countryCode: countryCode.uppercased())
@@ -45,9 +60,29 @@ struct CountryDetailView: View {
         }
     }
     
-    func getName(_ data: NSDictionary) -> String {
+    func infoBox(title: String, value: String) -> some View {
+        VStack {
+            Text(title)
+                .font(.headline)
+            Text(value)
+                .font(.body)
+        }
+        .padding()
+        .frame(maxWidth: .infinity)
+        .background(Color.gray.opacity(0.2))
+        .cornerRadius(10)
+    }
+    
+    func getFlag(_ data: NSDictionary) -> String {
+        if let flag = data["flag"] as? String {
+            return flag
+        }
+        return ""
+    }
+    
+    func getOfficialName(_ data: NSDictionary) -> String {
         if let name = data["name"] as? NSDictionary {
-            return name["common"] as? String ?? "N/A"
+            return name["official"] as? String ?? "N/A"
         }
         return "N/A"
     }
@@ -63,9 +98,20 @@ struct CountryDetailView: View {
         return data["region"] as? String ?? "N/A"
     }
     
+    func getSubregion(_ data: NSDictionary) -> String {
+        return data["subregion"] as? String ?? "N/A"
+    }
+    
     func getPopulation(_ data: NSDictionary) -> String {
         if let pop = data["population"] as? Int {
             return String(pop)
+        }
+        return "N/A"
+    }
+    
+    func getArea(_ data: NSDictionary) -> String {
+        if let area = data["area"] as? Double {
+            return String(area)
         }
         return "N/A"
     }
@@ -77,6 +123,13 @@ struct CountryDetailView: View {
                     return obj["name"] as? String ?? "N/A"
                 }
             }
+        }
+        return "N/A"
+    }
+    
+    func getTimezones(_ data: NSDictionary) -> String {
+        if let zones = data["timezones"] as? [String], zones.count > 0 {
+            return zones.joined(separator: ", ")
         }
         return "N/A"
     }

@@ -21,8 +21,8 @@ class CountryService {
             if let data = data {
                 let json = try? JSONSerialization.jsonObject(with: data) as? [NSDictionary]
                 
-                if json != nil && json!.count > 0 {
-                    CountryService.countryData = json![0]
+                if let json = json, json.count > 0 {
+                    CountryService.countryData = json[0]
                 }
             }
         }
