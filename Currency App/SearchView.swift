@@ -13,14 +13,19 @@ struct SearchView: View {
     @Binding var selectedCountryCode: String
     
     // Filters the country
-    // for exmaple if you will write uni it will give options like Unites States or United Kingdom
     var filteredCountries: [(key: String, value: String)] {
+        
+        // return all countries sorted alphabetically by name
         if countryName.isEmpty {
             return countriesDict.sorted { $0.value < $1.value }
         }
         else {
             return countriesDict
+            
+            // This filter checks each country name
                 .filter { $0.value.lowercased().contains(countryName.lowercased()) }
+            
+            // After filtering, sort the results alphabetically
                 .sorted { $0.value < $1.value }
         }
     }

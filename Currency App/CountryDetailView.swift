@@ -21,8 +21,16 @@ struct CountryDetailView: View {
                     .font(.largeTitle)
                     .bold()
                 
-                Button("Load Country Info") {
+                Button(action: {
                     loadCountry()
+                }) {
+                    Text("Load Country Info")
+                        .fontWeight(.semibold)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue.opacity(0.9))
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
                 }
                 
                 if let data = countryData {
@@ -72,7 +80,9 @@ struct CountryDetailView: View {
     }
     
     // loading a country
-    
+    // calls the API service and loads country data
+    // after 1 second, it updates countryData
+    // updating countryData refreshes the UI
     func loadCountry() {
         CountryService().loadCountry(countryCode: countryCode.uppercased())
         
@@ -82,7 +92,9 @@ struct CountryDetailView: View {
     }
     
     // infobox which helps alot
-    
+    // creates a reusable styled box for displaying the information
+    // instead of repeating design code many times
+    // we reuse this function to keep everything clean
     func infoBox(title: String, value: String) -> some View {
         VStack {
             Text(title)
@@ -97,7 +109,9 @@ struct CountryDetailView: View {
     }
     
     // getting information and returning it
-    
+    // each function extracts a specific piece of data
+    // from the JSON dictionary safely
+    // this keeps everything clean and separates logic from layout
     func getFlag(_ data: NSDictionary) -> String {
         if let flag = data["flag"] as? String {
             return flag
