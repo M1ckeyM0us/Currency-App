@@ -30,13 +30,35 @@ struct CountryDetailView: View {
                     Text(getFlag(data))
                         .font(.system(size: 80))
                     
+                    // basics of a country
+                    
+                    Text("Essentials")
+                        .font(.title2)
+                        .bold()
+                    
                     infoBox(title: "Official Name", value: getOfficialName(data))
-                    infoBox(title: "Capital", value: getCapital(data))
+                    infoBox(title: "Capital City", value: getCapital(data))
+                    infoBox(title: "Currency", value: getCurrency(data))
+                    
+                    // land and ppls
+                    
+                    Text("Geography & People")
+                        .font(.title2)
+                        .bold()
+                    
                     infoBox(title: "Region", value: getRegion(data))
                     infoBox(title: "Subregion", value: getSubregion(data))
                     infoBox(title: "Population", value: getPopulation(data))
                     infoBox(title: "Area (km²)", value: getArea(data))
-                    infoBox(title: "Currency", value: getCurrency(data))
+                    infoBox(title: "Languages", value: getLanguages(data))
+                    
+                    // government
+                    
+                    Text("Government & Status")
+                        .font(.title2)
+                        .bold()
+                    
+                    infoBox(title: "Independent", value: getIndependent(data))
                     infoBox(title: "Timezones", value: getTimezones(data))
                     
                 } else {
@@ -49,8 +71,7 @@ struct CountryDetailView: View {
         }
     }
     
-    // its really neccessary
-    // all of those functions are being used for displaying information
+    // loading a country
     
     func loadCountry() {
         CountryService().loadCountry(countryCode: countryCode.uppercased())
@@ -59,6 +80,8 @@ struct CountryDetailView: View {
             self.countryData = CountryService.countryData
         }
     }
+    
+    // infobox which helps alot
     
     func infoBox(title: String, value: String) -> some View {
         VStack {
@@ -72,6 +95,8 @@ struct CountryDetailView: View {
         .background(Color.gray.opacity(0.2))
         .cornerRadius(10)
     }
+    
+    // getting information and returning it
     
     func getFlag(_ data: NSDictionary) -> String {
         if let flag = data["flag"] as? String {
@@ -123,6 +148,28 @@ struct CountryDetailView: View {
                     return obj["name"] as? String ?? "N/A"
                 }
             }
+        }
+        return "N/A"
+    }
+    
+    func getLanguages(_ data: NSDictionary) -> String {
+        if let languages = data["languages"] as? NSDictionary {
+            var list: [String] = []
+            
+            for (_, value) in languages {
+                if let lang = value as? String {
+                    list.append(lang)
+                }
+            }
+            
+            return list.joined(separator: ", ")
+        }
+        return "N/A"
+    }
+    
+    func getIndependent(_ data: NSDictionary) -> String {
+        if let independent = data["independent"] as? Bool {
+            return independent ? "Yes" : "No"
         }
         return "N/A"
     }
