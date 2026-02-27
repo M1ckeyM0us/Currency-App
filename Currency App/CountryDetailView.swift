@@ -39,7 +39,6 @@ struct CountryDetailView: View {
                         .font(.system(size: 80))
                     
                     // basics of a country
-                    
                     Text("Essentials")
                         .font(.title2)
                         .bold()
@@ -48,8 +47,7 @@ struct CountryDetailView: View {
                     infoBox(title: "Capital City", value: getCapital(data))
                     infoBox(title: "Currency", value: getCurrency(data))
                     
-                    // land and ppls
-                    
+                    // land and ppl
                     Text("Geography & People")
                         .font(.title2)
                         .bold()
@@ -61,7 +59,6 @@ struct CountryDetailView: View {
                     infoBox(title: "Languages", value: getLanguages(data))
                     
                     // government
-                    
                     Text("Government & Status")
                         .font(.title2)
                         .bold()
