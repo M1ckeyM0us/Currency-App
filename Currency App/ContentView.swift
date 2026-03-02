@@ -23,6 +23,9 @@ struct ContentView: View {
                 .tabItem {
                     Label("Details", systemImage: "doc.text")
                 }
+            
+            
+            
         }
     }
 }

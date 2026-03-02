@@ -6,3 +6,33 @@
 //
 
 import Foundation
+
+class NewsService {
+    
+    static var newsArticles: [NSDictionary] = []
+    
+    func loadNews(countryCode: String) {
+        
+        let apiKey = "36408a4f608c48278c29bfb4469c9461"
+    
+        let urlString = "https://newsapi.org/v2/top-headlines?country=\(countryCode.lowercased())&apiKey=\(apiKey)"
+        
+        let url = URL(string: urlString)!
+        
+        let task = URLSession.shared.dataTask(with: url) { data, _, _ in
+            
+            if let data = data {
+                
+                let json = try? JSONSerialization.jsonObject(with: data) as? NSDictionary
+                
+                if let json = json,
+                   let articles = json["articles"] as? [NSDictionary] {
+                    
+                    NewsService.newsArticles = articles
+                }
+            }
+        }
+        
+        task.resume()
+    }
+}
