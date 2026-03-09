@@ -34,7 +34,7 @@ struct SearchView: View {
         NavigationView {
             VStack {
                 
-                TextField("Enter country name", text: $countryName)
+                TextField("Enter Country Name", text: $countryName)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
                 
@@ -42,6 +42,8 @@ struct SearchView: View {
                     Button(country.value) {
                         selectedCountryCode = country.key
                         countryName = country.value
+                        //CountryService().loadCountry(countryCode: country.key)
+                        //NewsService().loadNews(countryCode: country.value)
                     }
                 }
                 
