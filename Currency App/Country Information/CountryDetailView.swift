@@ -6,11 +6,18 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct CountryDetailView: View {
     
     var countryCode: String
     @State var countryData: NSDictionary? = nil
+    
+    // region for the map
+    @State var region = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 0, longitude: 0),
+        span: MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10)
+    )
     
     var body: some View {
         
@@ -66,7 +73,17 @@ struct CountryDetailView: View {
                     infoBox(title: "Independent", value: getIndependent(data))
                     infoBox(title: "Timezones", value: getTimezones(data))
                     
-                } else {
+                    // map section
+                    Text("Location")
+                        .font(.title2)
+                        .bold()
+                    
+                    Map(coordinateRegion: $region)
+                        .frame(height: 250)
+                        .cornerRadius(10)
+                    
+                }
+                else {
                     Text("No data loaded")
                 }
                 
@@ -85,6 +102,17 @@ struct CountryDetailView: View {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             self.countryData = CountryService.countryData
+            
+            // update map coordinates
+            if let data = countryData,
+               let coords = data["latlng"] as? [Double],
+               coords.count >= 2 {
+                
+                region.center = CLLocationCoordinate2D(
+                    latitude: coords[0],
+                    longitude: coords[1]
+                )
+            }
         }
     }
     
@@ -109,6 +137,7 @@ struct CountryDetailView: View {
     // each function extracts a specific piece of data
     // from the JSON dictionary safely
     // this keeps everything clean and separates logic from layout
+    
     func getFlag(_ data: NSDictionary) -> String {
         if let flag = data["flag"] as? String {
             return flag
@@ -165,6 +194,7 @@ struct CountryDetailView: View {
     
     func getLanguages(_ data: NSDictionary) -> String {
         if let languages = data["languages"] as? NSDictionary {
+            
             var list: [String] = []
             
             for (_, value) in languages {
