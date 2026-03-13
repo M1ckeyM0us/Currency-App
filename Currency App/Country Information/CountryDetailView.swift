@@ -105,12 +105,19 @@ struct CountryDetailView: View {
             
             // update map coordinates
             if let data = countryData,
+               let cpitalInfo = data["capitalInfo"] as? NSDictionary,
                let coords = data["latlng"] as? [Double],
-               coords.count >= 2 {
+            
+               coords.count == 2 {
                 
                 region.center = CLLocationCoordinate2D(
                     latitude: coords[0],
                     longitude: coords[1]
+                )
+                
+                region.span = MKCoordinateSpan(
+                    latitudeDelta: 3,
+                    longitudeDelta: 3
                 )
             }
         }
