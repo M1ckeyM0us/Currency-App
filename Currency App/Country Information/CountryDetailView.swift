@@ -19,6 +19,9 @@ struct CountryDetailView: View {
         span: MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10)
     )
     
+    // capital location pin
+    @State var capitalCoordinate = CLLocationCoordinate2D(latitude: 0, longitude: 0)
+    
     var body: some View {
         
         ScrollView {
@@ -78,9 +81,16 @@ struct CountryDetailView: View {
                         .font(.title2)
                         .bold()
                     
-                    Map(coordinateRegion: $region)
-                        .frame(height: 250)
-                        .cornerRadius(10)
+                    // gets and puts a red dot on capital to see where the country is that and its capital
+                    Map(coordinateRegion: $region, annotationItems: [CapitalPlace(coordinate: capitalCoordinate)]) { place in
+                        MapAnnotation(coordinate: place.coordinate) {
+                            Image(systemName: "circle.fill")
+                                .foregroundColor(.red)
+                                .font(.system(size: 10))
+                        }
+                    }
+                    .frame(height: 250)
+                    .cornerRadius(10)
                     
                 }
                 else {
@@ -105,15 +115,16 @@ struct CountryDetailView: View {
             
             // update map coordinates
             if let data = countryData,
-               let cpitalInfo = data["capitalInfo"] as? NSDictionary,
-               let coords = data["latlng"] as? [Double],
-            
+               let capitalInfo = data["capitalInfo"] as? NSDictionary,
+               let coords = capitalInfo["latlng"] as? [Double],
                coords.count == 2 {
                 
-                region.center = CLLocationCoordinate2D(
+                capitalCoordinate = CLLocationCoordinate2D(
                     latitude: coords[0],
                     longitude: coords[1]
                 )
+                
+                region.center = capitalCoordinate
                 
                 region.span = MKCoordinateSpan(
                     latitudeDelta: 3,
@@ -121,6 +132,12 @@ struct CountryDetailView: View {
                 )
             }
         }
+    }
+    
+    // struct for capital pin
+    struct CapitalPlace: Identifiable {
+        let id = UUID()
+        let coordinate: CLLocationCoordinate2D
     }
     
     // infobox which helps alot
